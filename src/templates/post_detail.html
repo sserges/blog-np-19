@@ -59,7 +59,19 @@
 
 				<div>
 					<p class="lead">Comments</p>
-					{{ comments }}
+					<hr/>
+					
+					{% for comment in instance.comments %}
+						<blockquote>
+							<p>
+								{{ comment.content }}
+							</p>
+							<footer>
+								via {{ comment.user }} | {{ comment.timestamp|timesince }} ago
+							</footer>
+						</blockquote>
+					{% endfor %}
+
 				</div>
 
 			</div>

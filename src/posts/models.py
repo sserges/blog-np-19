@@ -9,6 +9,8 @@ from django.utils.text import slugify
 from django.utils.safestring import mark_safe
 
 from markdown_deux import markdown
+
+from comments.models import Comment
 # Create your models here.
 # MVC MODEL VIEW CONTROLLER
 
@@ -77,6 +79,10 @@ class Post(models.Model):
     def get_markdown(self):
         content = self.content
         return mark_safe(markdown(content))
+
+    @property
+    def comments(self):
+        return Comment.objects.filter_by_instance(self)
 
     class Meta:
         ordering = ["-timestamp", "-updated"]
