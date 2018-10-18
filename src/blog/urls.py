@@ -19,10 +19,15 @@ from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.contrib import admin
 
+from accounts.views import (
+    login_view,
+)
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^posts/', include("posts.urls", namespace='posts')),
     url(r'^comments/', include("comments.urls", namespace='comments')),
+    url(r'^login/$', login_view, name='login'),
 ]
 
 if settings.DEBUG:
