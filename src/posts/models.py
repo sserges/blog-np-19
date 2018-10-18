@@ -12,6 +12,7 @@ from django.utils.safestring import mark_safe
 from markdown_deux import markdown
 
 from comments.models import Comment
+from .utils import get_read_time, unique_slug_generator
 # Create your models here.
 # MVC MODEL VIEW CONTROLLER
 
@@ -63,6 +64,7 @@ class Post(models.Model):
     content = models.TextField()
     draft = models.BooleanField(default=False)
     publish = models.DateField(auto_now=False, auto_now_add=False)
+    read_time = models.TimeField(null=True, blank=True)
     updated = models.DateTimeField(auto_now=True, auto_now_add=False)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
 
@@ -115,12 +117,16 @@ def create_slug(instance, new_slug=None):
 '''
 unique_slug_generator from Django Code Review #2 on joincfe.com/youtube/
 '''
-from .utils import unique_slug_generator
 
 def pre_save_post_receiver(sender, instance, *args, **kwargs):
     if not instance.slug:
         # instance.slug = create_slug(instance)
         instance.slug = unique_slug_generator(instance)
+
+    if instance.content:
+        html_string = instance.get_markdown()
+        read_time = get_read_time(html_string)
+        instance.read_time = read_time
 
 
 
