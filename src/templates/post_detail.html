@@ -7,6 +7,9 @@
 	{{ instance.title }} | {{ block.super }}
 {% endblock head_title %}
 
+{% block post_detail_link %}
+	<li><a href="{{ instance.get_absolute_url }}">{{ instance.title }}</a></li>
+{% endblock post_detail_link %}
 
 
 {% block content %}
@@ -69,13 +72,15 @@
 
 				<div>
 					<p class="lead">Comments</p>
-
-					<form method="POST" action=".">
-						{% csrf_token %}
-						{{ comment_form|crispy }}
-						<input type="submit" value="Post comment" class="btn btn-default" />
-					</form>
-
+					{% if request.user.is_authenticated %}
+						<form method="POST" action=".">
+							{% csrf_token %}
+							{{ comment_form|crispy }}
+							<input type="submit" value="Post comment" class="btn btn-default" />
+						</form>
+					{% else %}
+						<p>You must login to comment</p>
+					{% endif %}
 					<hr/>
 					
 					{% for comment in instance.comments %}
@@ -89,7 +94,9 @@
 								{% with nb_comments=comment.children.count %}
 									{{ nb_comments }} Comment{{nb_comments|pluralize}} |
 								{% endwith %}
-								<a href="#" class="comment-reply-btn">Reply</a> |
+								{% if request.user.is_authenticated %}
+									<a href="#" class="comment-reply-btn">Reply</a> |
+								{% endif %}
 								<a href="{{ comment.get_absolute_url }}">Thread</a>
 							</footer>
 
@@ -103,12 +110,16 @@
 									</blockquote>
 								{% endfor %}
 
-								<form method="POST" action=".">
-									{% csrf_token %}
-									{{ comment_form|crispy }}
-									<input type="hidden" name="parent_id" value="{{ comment.id }}" />
-									<input type="submit" value="Reply" class="btn btn-default" />
-								</form>
+								{% if request.user.is_authenticated %}
+									<form method="POST" action=".">
+										{% csrf_token %}
+										{{ comment_form|crispy }}
+										<input type="hidden" name="parent_id" value="{{ comment.id }}" />
+										<input type="submit" value="Reply" class="btn btn-default" />
+									</form>
+								{% else %}
+									<p>You must login to comment</p>
+								{% endif %}
 							</div>
 						</blockquote>
 					{% endfor %}
