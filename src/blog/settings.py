@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'markdown_deux',
     'crispy_forms',
     'django_extensions',
+    'rest_framework',
 
     'posts',
     'comments',
