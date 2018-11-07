@@ -45,7 +45,7 @@
 					<li class="pull-right"><a href="{% url 'login' %}">Login</a></li>
 				{% else %}
 					<li class="pull-right"><a href="{% url 'logout' %}">Logout</a></li>
-					<li class="pull-right"><a href="#">{{ request.user.username }}</a></li>
+					<li class="pull-right">{{ request.user.username }}</li>
 				{% endif %}
 			</ol>
 
