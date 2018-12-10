@@ -8,17 +8,17 @@ from comments.models import Comment
 
 
 class CommentListSerializer(ModelSerializer):
-    url = HyperlinkedIdentityField(
-        view_name='comments-api:thread',
-        lookup_field='pk'
-    )
+    # url = HyperlinkedIdentityField(
+    #     view_name='comments-api:thread',
+    #     lookup_field='pk'
+    # )
     reply_count = SerializerMethodField()
 
     class Meta:
         model = Comment
         fields = [
             'id',
-            'url',
+            # 'url',
             'content_type',
             'object_id',
             'parent',
