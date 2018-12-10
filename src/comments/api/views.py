@@ -21,7 +21,8 @@ from rest_framework.permissions import (
 from posts.api.permissions import IsOwnerOrReadOnly
 from posts.api.pagination import PostLimitOffsetPagination, PostPageNumberPagination
 from .serializers import (
-   CommentSerializer,
+   CommentListSerializer,
+   CommentDetailSerializer,
 )
 from ..models import Comment
 
@@ -37,7 +38,7 @@ from ..models import Comment
 
 class CommentDetailAPIView(RetrieveAPIView):
     queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
+    serializer_class = CommentDetailSerializer
     # lookup_field = 'slug'
 
 
@@ -59,7 +60,7 @@ class CommentDetailAPIView(RetrieveAPIView):
 
 
 class CommentListAPIView(ListAPIView):
-    serializer_class = CommentSerializer
+    serializer_class = CommentListSerializer
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['content', 'user__first_name']
     pagination_class = PostPageNumberPagination
