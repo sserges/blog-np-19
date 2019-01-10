@@ -9,6 +9,7 @@ from rest_framework.serializers import (
     EmailField,
 )
 from rest_framework import request
+from django.db.models import Q
 
 
 User = get_user_model()
@@ -78,8 +79,8 @@ class UserCreateSerializer(ModelSerializer):
 
 class UserLoginSerializer(ModelSerializer):
     token = CharField(allow_blank=True, read_only=True)
-    username = CharField()
-    email = EmailField(label="Email Address")
+    username = CharField(required=False, allow_blank=True)
+    email = EmailField(label="Email Address", required=False, allow_blank=True)
     class Meta:
         model = User
         fields = [
@@ -95,9 +96,29 @@ class UserLoginSerializer(ModelSerializer):
         }
     
     def validate(self, data):
-        # email = data['email']
-        # user_qs = User.objects.filter(email=email)
+        user_obj = None
+        email = data.get("email", None)
+        username = data.get("username", None)
+        password = data["password"]
 
-        # if user_qs.exists():
-        #     raise ValidationError("This user has already registered.")
+        if not email and not username:
+            raise ValidationError("A username or email is required to login.")
+        
+        user = User.objects.filter(
+            Q(email=email)|
+            Q(username=username)
+        ).distinct()
+        user = user.exclude(email__isnull=True).exclude(email__iexact='')
+        # print(user)
+
+        if user.exists() and user.count() == 1:
+            user_obj = user.first()
+        else:
+            raise ValidationError("This username/email is not valid.")
+        
+        if user_obj:
+            if not user_obj.check_password(password):
+                raise ValidationError("Incorrect credentials please try again.")
+        
+        data['token'] = "SOME RANDOM TOKENS"
         return data
