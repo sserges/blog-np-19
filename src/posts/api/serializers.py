@@ -6,6 +6,7 @@ from rest_framework.serializers import (
 
 from comments.api.serializers import CommentListSerializer
 from comments.models import Comment
+from accounts.api.serializers import UserDetailSerializer
 
 from posts.models import Post
 
@@ -29,7 +30,7 @@ post_detail_url = HyperlinkedIdentityField(
 
 class PostDetailSerializer(ModelSerializer):
     url = post_detail_url
-    user = SerializerMethodField()
+    user = UserDetailSerializer(read_only=True)
     image = SerializerMethodField()
     html = SerializerMethodField()
     comments = SerializerMethodField()
@@ -51,9 +52,6 @@ class PostDetailSerializer(ModelSerializer):
     
     def get_html(self, obj):
         return obj.get_markdown()
-    
-    def get_user(self, obj):
-        return str(obj.user.username)
 
     def get_image(self, obj):
         try:
@@ -70,7 +68,7 @@ class PostDetailSerializer(ModelSerializer):
 
 class PostListSerializer(ModelSerializer):
     url = post_detail_url
-    user = SerializerMethodField()
+    user = UserDetailSerializer(read_only=True)
     # delete_url = HyperlinkedIdentityField(
     #     view_name='posts-api:delete',
     #     lookup_field='slug'
@@ -86,5 +84,5 @@ class PostListSerializer(ModelSerializer):
             'publish',
         ]
     
-    def get_user(self, obj):
-        return str(obj.user.username)
+    # def get_user(self, obj):
+    #     return str(obj.user.username)
