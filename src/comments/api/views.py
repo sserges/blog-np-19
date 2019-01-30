@@ -55,7 +55,7 @@ class CommentCreateAPIView(CreateAPIView):
 class CommentDetailAPIView(DestroyModelMixin, UpdateModelMixin, RetrieveAPIView):
     queryset = Comment.objects.filter(id__gte=0)
     serializer_class = CommentDetailSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly]
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
@@ -85,6 +85,7 @@ class CommentListAPIView(ListAPIView):
     serializer_class = CommentListSerializer
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['content', 'user__first_name']
+    permission_classes = [AllowAny]
     pagination_class = PostPageNumberPagination
 
     def get_queryset(self, *args, **kwargs):
